@@ -150,53 +150,6 @@
   }
 
 
-  // /** 
-  //  * we want to calculate the projected coordinates (x1,y1,z1) on the plane,
-  //  * starting from the point (x,y,z) in the space.
-  //  * 
-  //  * first thing we need to do is calculating the vector that goes to the center of the camera (cx0,cy0,cz0)
-  //  * to the point (x,y,z) we can do this by doing : 
-  //  * 1)
-  //  *                x = x-cx
-  //  *                y = y-ct
-  //  *                z = z-cz
-  //  * 
-  //  * and then normalize the vector (make the vector of lengh = 1 ), because we are intrested in the direction.
-  //  * in order to do this we simply need to do :
-  //  * 2)
-  //  *                    (x,y,z)
-  //  *     -------------------------------------- 
-  //  *     sqrt( (x-cx)^2 + (y-cy)^2 + (z-cz)^2 ) -- ( distance formula in the space) 
-  //  * 
-  //  * so we have the normlyzed vector of coordinates (nx,ny,nz)
-  //  * 
-  //  * then to get the projection on the plane we just multiply the 
-  //  * normalyzed vector times plan-camera distance ! 
-  //  * 3)
-  //  *               x1 = x - (planCameraDistance * nx)
-  //  *               y1 = y - (planCameraDistance * ny)
-  //  *               z1 = z - (planCameraDistance * nz)
-  //  */
-  // const getProjectionPoints = function(points) {
-  //   const projections = []
-  //   for (const point of points) {
-  //     const [x, y, z] = point
-  //     // calculating distance between (x,y,z) and (cx0,cy0,cz0) 
-  //     const d_x_cx0 = Math.pow((x - cx0), 2)
-  //     const d_y_cy0 = Math.pow((y - cy0), 2)
-  //     const d_z_cz0 = Math.pow((z - cz0), 2)
-  //     const pointCameraDistance = Math.sqrt(d_x_cx0 + d_y_cy0 + d_z_cz0)
-  //     // normalyzing the vector
-  //     const [nx, ny, nz] = [(x - cx0) / pointCameraDistance, (y - cy0) / pointCameraDistance, (z - cz0) / pointCameraDistance]
-  //     const x1 = x - (planCameraDistance * nx)
-  //     const y1 = y - (planCameraDistance * ny)
-  //     // const z1 = z - (planCameraDistance * nz)  // we dont need to calculate z1
-  //     projections.push([x1, y1]);
-  //   }
-  //   return projections;
-  // }
-
-
   // given a figure( list of points) draw it
   const drawPoints = async function(figure, fill = 2) {
     let i = 0
