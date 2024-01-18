@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disegnare un Punto</title>
+</head>
+
+<body>
+  <canvas id="myCanvas" width="1000" height="1000"></canvas>
+
+  <script>
+    'use strict'
+    const R = 80
+    const STEP = 0.01
+    const ROUND_LINE = true
+
+    // Ottieni il riferimento al canvas utilizzando JavaScript
+    const canvas = document.getElementById("myCanvas");
+
+    // Ottieni il contesto di rendering 2D
+    const ctx = canvas.getContext("2d")
+
+    /** 
+     * let's draw a rotating line using the parametric equations for a cirche
+     * considering that a point in the plane can be represent as 
+     * x = R*cos(theta)
+     * y = R*sin(theta)
+     * 
+     * so to have a circle in x0, y0 => 
+     * 
+     * x = R*cos(theta) + xo
+     * y = R*sin(theta) + yo
+     * with theta that goes from 0 to 2*PI
+     */
+
+    // draw center
+
+
+    //  calculating PI radiant circumference 
+    const getCircle = function(center, theta, drawCenter = true, ) {
+      const [x0, y0] = center
+      const circle = new Set()
+      if (drawCenter) {
+        ctx.fillRect(x0, y0, 1, 1)
+        ctx.fillRect(x0, y0 + 1, 1, 1)
+        ctx.fillRect(x0, y0 - 1, 1, 1)
+        ctx.fillRect(x0 - 1, y0, 1, 1)
+        ctx.fillRect(x0 + 1, y0, 1, 1)
+      }
+
+
+      for (let t = 0; t < theta; t += STEP) {
+        let x = R * Math.cos(t) + x0
+        let y = R * Math.sin(t) + y0
+        circle.add([Math.round(x), Math.round(y)])
+      }
+
+      return circle
+    }
+
+
+
+
+    const drawPoints = function(figure) {
+      const fill = 2
+      let i = 0
+      for (const point of figure) {
+        const [x, y] = point
+        ctx.fillRect(x, y, 2, 2)
+        // console.log(`x:${x} - y:${y}`)
+
+      }
+    }
+
+    /** 
+     * no we have circle points and center,
+     * we can draw a line foreach point of the circle passing for center,
+     * in order to do this we must calculate the m of the lin:
+     * 
+     * 1) y-y0 = m(x-x0) => m = (x-x0)/y-y0
+     * 
+     * now we need q ( y = mx +q)
+     * just resolve the 1 eq considering 1 x0 and y0 known
+     * 
+     * y-y0 = m*(x-x0)
+     * y = m*x + (y0 - m*x0)
+     * => q = y0-m*x0
+     */
+    const twoPointLine = function(a, b) {
+      let [x1, y1] = a
+      let [x2, y2] = b
+
+      if (x1 > x2) {
+        [x1, x2] = [x2, x1];
+        [y1, y2] = [y2, y1];
+      }
+
+      // calculating m having a and b
+      const m = (y2 - y1) / (x2 - x1)
+
+      // calculating q having m adn a or b
+      const q = (y1 - m * x1)
+
+
+      // set are faster than array and also we don't need duplicate values and we don't care about order
+      const line = new Set()
+      /** 
+       *  let step = 1 / Math.abs(m) (below)
+       * 
+       * As m increases, the generated segment will be longer, so the larger m grows, 
+       * the smaller the step with which I generate the x must be, otherwise we would have 
+       * empty spaces between one point and another on the line. ques
+       * 
+       * To understand why using 1/|m| as a step during the creation of the line is important, 
+       * let's consider the following situation:
+       *
+       * Imagine having a line with a very high slope, for example m = 10, and two points A and B:
+       * - A(0, 0)
+       * - B(1, 10)
+       *
+       * If we use a fixed step of 1 for x, we will get the following points on the line:
+       * - x = 0, y = 0
+       * - x = 1, y = 10
+       *
+       * However, between these two points, we will have a series of x positions that do not 
+       * correspond to integer values. For example, if we consider x = 0.1, we get:
+       * - x = 0.1, y = 1
+       * And if we consider x = 0.2, we get:
+       * - x = 0.2, y = 2
+       *
+       * Continuing this way, we see that many integer values of y are missed because we are 
+       * advancing with steps of 1 on x, and the line has a very steep slope.
+       *
+       * If, on the other hand, we use a step of 1/|m| (in our example, 1/10), we get a higher 
+       * density of points because we are considering smaller steps on x to capture finer details 
+       * along the line. This helps to reduce the loss of points when the slope is high, improving 
+       * the representation of the line on a discrete grid.
+       * 
+       * However, suing 1/|m| can lead to very large step when m is very samll, this can cause the loss of point as wellwe so we set a maximum 
+       * limit of 1 for the step. This ensures that even for shallow slopes, the step remains within a 
+       * reasonable range to maintain a visually coherent representation of the line. 
+       */
+
+
+      let step = 1
+      step = 1 / Math.abs(m)
+
+      if (step > 1) {
+        // Limitare il passo massimo per evitare di saltare troppi pixel
+        step = 1;
+      }
+
+      // handling limit cases 
+      if (m == 0 || !isFinite(m)) {
+        step = 1
+      }
+
+      // generating line points
+      for (let x = x1; x <= x2; x += step) {
+        // calculating y 
+        let y = m * x + q
+        y = Math.round(y)
+        line.add([Math.round(x), y])
+      }
+
+      return line;
+    }
+
+    const center = [100, 100];
+    const circle = getCircle(center, 2 * Math.PI);
+
+    // function animateLines() {
+    //   // Pulisci il canvas solo al primo frame
+    //   if (frame === 0) {
+    //     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    //   }
+
+    //   for (let i = 0; i <= frame; i++) {
+    //     const point = Array.from(circle)[i];
+    //     if (point) {
+    //       const line = twoPointLine(center, point);
+    //       drawPoints(line);
+    //     }
+    //   }
+
+    //   frame++;
+
+    //   // Richiedi il prossimo frame
+    //   requestAnimationFrame(animateLines);
+    // }
+
+    let frame = 0
+
+    function animateLines() {
+      const intervalId = setInterval(() => {
+        if (frame >= circle.size) {
+          clearInterval(intervalId); // Interrompi l'animazione quando tutte le linee sono disegnate
+          return;
+        }
+
+        const point = Array.from(circle)[frame];
+        const line = twoPointLine(center, point);
+        drawPoints(line);
+
+        frame++;
+      }, 0.1); // Intervallo di circa 60 fps
+    }
+
+    // Avvia l'animazione delle linee
+    animateLines()
+  </script>
+</body>
+
+</html>

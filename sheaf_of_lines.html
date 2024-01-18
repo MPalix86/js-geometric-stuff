@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disegnare un Punto</title>
+</head>
+
+<body>
+  <canvas id="myCanvas" width="400" height="200"></canvas>
+
+  <script>
+    'use strict'
+    const rotatingLine = async function() {
+      const Y0 = 100
+      const X0 = 100
+      const LINE_W = 200
+      // Ottieni il riferimento al canvas utilizzando JavaScript
+      const canvas = document.getElementById("myCanvas");
+
+      // Ottieni il contesto di rendering 2D
+      const ctx = canvas.getContext("2d");
+
+
+
+      ctx.fillRect(0, 0, 6, 6);
+      ctx.fillRect(X0, Y0, 6, 6);
+
+      const getLine = function(m, x) {
+        let y = m * (x - X0) + Y0
+        ctx.fillRect(x, y, 2, 2)
+      }
+
+      for (let m = 0; m < 4; m += 0.1) {
+        setTimeout(function() {
+          for (let x = 0; x < LINE_W; x++) {
+            getLine(m, x)
+          }
+        }, 1000)
+      }
+    }
+
+    rotatingLine()
+  </script>
+</body>
+
+</html>

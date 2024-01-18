@@ -68,7 +68,7 @@
    * y = m*x + (y0 - m*x0)
    * => q = y0-m*x0
    */
-  const twoPointLine = async function(a, b) {
+  const getTwoPointsLine = async function(a, b) {
 
     let [x1, y1] = a
     let [x2, y2] = b
@@ -87,7 +87,7 @@
     // set are faster than array and also we don't need duplicate values and we don't care about order
     const line = new Set()
     /** 
-     *  let step = 1 / Math.abs(m) (below)
+     * let step = 1 / Math.abs(m) (below)
      * 
      * As m increases, the generated segment will be longer, so the larger m grows, 
      * the smaller the step with which I generate the x must be, otherwise we would have 
@@ -142,6 +142,7 @@
         line.add([x1, y])
       }
     } else {
+
       // generating point for every m != infinite
       for (let x = x1; x <= x2; x += step) {
         let y = m * x + q
@@ -164,6 +165,7 @@
    */
   const rotationMatrix2D = async function(figure, center, theta, keepCenter = true) {
     const figure1 = []
+
     for (point of figure) {
       let [x, y] = point
       const [xc, yc] = center
@@ -193,10 +195,10 @@
 
     // pushing all the lines calculation inside the array in order to execute it asyncronously w 
     const linesPromises = [
-      twoPointLine(a, b),
-      twoPointLine(a, c),
-      twoPointLine(b, d),
-      twoPointLine(c, d)
+      getTwoPointsLine(a, b),
+      getTwoPointsLine(a, c),
+      getTwoPointsLine(b, d),
+      getTwoPointsLine(c, d)
     ];
 
     // waiting for calculation to be done
@@ -214,7 +216,7 @@
 
 
   // degrees to radiants conversion factor
-  const oneDegree = (Math.PI / 180)
+  const oneDegree = (Math.PI / 180) * 0.01
 
 
   let frame = 0
