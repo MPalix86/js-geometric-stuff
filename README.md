@@ -10,4 +10,4 @@ A series of html and js files containing geometric experiments using algebra, cr
 - rotating_cube.hmtl:
 3D rotating cube
 (you can find all the details in the comments inside the file)
-<img src="https://raw.githubusercontent.com/MPalix86/js-geometric-stuff/main/gif/rotating_square.gif"  />
+<img src="https://raw.githubusercontent.com/MPalix86/js-geometric-stuff/main/gif/rotating_cube.gif"  />
