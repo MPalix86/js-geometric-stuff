@@ -187,7 +187,7 @@
   }
 
 
-  const drawSquare = async function(vertices) {
+  const drawSquare = async function(vertices, fill = 2) {
     const a = vertices[0]
     const b = vertices[1]
     const c = vertices[2]
@@ -207,7 +207,7 @@
     // pushing all the lines calculation inside the array in order to execute it asyncronously w 
     const drawsPromises = []
     for (line of lines) {
-      drawsPromises.push(drawPoints(line))
+      drawsPromises.push(drawPoints(line, fill))
     }
 
     // waiting for calculation to be done
@@ -216,7 +216,7 @@
 
 
   // degrees to radiants conversion factor
-  const oneDegree = (Math.PI / 180) * 0.01
+  const oneDegree = (Math.PI / 180)
 
 
   let frame = 0
@@ -227,7 +227,7 @@
         frame = 0
       }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      await drawSquare(rotatedVertices);
+      await drawSquare(rotatedVertices, 5);
       rotatedVertices = []
       rotatedVertices = await rotationMatrix2D(VERTICES, CENTER, frame * oneDegree)
       frame++
